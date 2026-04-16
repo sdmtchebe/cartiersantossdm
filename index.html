@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cartier Santos Assembly Game</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+
+        #background {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .piece {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            max-width: 150px;
+            max-height: 150px;
+        }
+
+        .piece:hover {
+            transform: scale(1.1);
+        }
+
+        .piece.collected {
+            pointer-events: none;
+        }
+
+        #band { top: 10%; left: 10%; width: 120px; }
+        #mechanism { top: 15%; right: 10%; width: 140px; }
+        #dial { bottom: 15%; left: 12%; width: 130px; }
+        #casing { bottom: 10%; right: 15%; width: 135px; }
+
+        .center-piece {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .center-piece.visible {
+            opacity: 1;
+        }
+
+        #assemble-btn, #present-btn, #show-btn {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 20px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            z-index: 300;
+        }
+
+        #assemble-btn:hover, #present-btn:hover, #show-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        #message-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 20px;
+            max-width: 600px;
+            display: none;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 200;
+        }
+
+        #white-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            display: none;
+        }
+
+        #sdm-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 60%;
+            max-height: 70%;
+            display: none;
+        }
+
+        #inspector-text {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            font-weight: bold;
+            text-align: center;
+            display: none;
+            max-width: 80%;
+        }
+
+        #watch-image {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            display: none;
+        }
+
+        #coin-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            display: none;
+        }
+
+        #coin-counter {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(255, 215, 0, 0.9);
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        #fart-image {
+            position: absolute;
+            bottom: 15%;
+            left: 52%;
+            transform: translateX(-50%);
+            width: 150px;
+            display: none;
+            opacity: 0;
+            z-index: 500;
+        }
+
+        @keyframes fartPulse {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .fart-animation {
+            animation: fartPulse 0.8s ease-in-out infinite;
+        }
+
+        #transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 9999;
+        }
+
+        .assembling {
+            font-size: 32px;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <img id="background" src="table.png" alt="Table Background">
+        
+        <!-- Watch pieces scattered around -->
+        <img id="band" class="piece" src="band.png" alt="Band">
+        <img id="mechanism" class="piece" src="mechanism.png" alt="Mechanism">
+        <img id="dial" class="piece" src="dial.png" alt="Dial">
+        <img id="casing" class="piece" src="casing.png" alt="Casing">
+
+        <!-- Center pieces (invisible until clicked) -->
+        <img id="band-center" class="center-piece" src="band.png" alt="Band Center">
+        <img id="mechanism-center" class="center-piece" src="mechanism.png" alt="Mechanism Center">
+        <img id="dial-center" class="center-piece" src="dial.png" alt="Dial Center">
+        <img id="casing-center" class="center-piece" src="casing.png" alt="Casing Center">
+
+        <!-- Assemble button -->
+        <button id="assemble-btn">ASSEMBLE</button>
+
+        <!-- Message box -->
+        <div id="message-box"></div>
+
+        <!-- Present button -->
+        <button id="present-btn">Present it</button>
+
+        <!-- White background for inspector scene -->
+        <div id="white-background"></div>
+        <img id="sdm-image" src="sdm.png" alt="SDM Inspector">
+        <div id="inspector-text"></div>
+        <img id="watch-image" src="watch.png" alt="Assembled Watch">
+        <button id="show-btn">Show</button>
+
+        <!-- Coin display -->
+        <img id="coin-image" src="coin.png" alt="Cartier Santos Coin">
+        <div id="coin-counter">C.S. Coins: <span id="coin-count">0</span></div>
+
+        <!-- Fart effect -->
+        <img id="fart-image" src="fart.png" alt="Fart Effect">
+
+        <!-- Transition overlay -->
+        <div id="transition-overlay"></div>
+    </div>
+
+    <audio id="click-sound" src="cartiersantos.mp3"></audio>
+    <audio id="fart-sound" src="fart.mp3"></audio>
+
+    <script>
+        let collectedPieces = 0;
+        let coins = 0;
+        let isTransitioning = false;
+
+        const pieces = ['band', 'mechanism', 'dial', 'casing'];
+        const clickSound = document.getElementById('click-sound');
+        const fartSound = document.getElementById('fart-sound');
+        const transitionOverlay = document.getElementById('transition-overlay');
+
+        // Play sound and show transition
+        function playClickAndTransition(callback) {
+            if (isTransitioning) return;
+            isTransitioning = true;
+
+            clickSound.currentTime = 0;
+            clickSound.play();
+
+            transitionOverlay.style.display = 'block';
+
+            setTimeout(() => {
+                transitionOverlay.style.display = 'none';
+                isTransitioning = false;
+                if (callback) callback();
+            }, 4000);
+        }
+
+        // Handle piece click
+        pieces.forEach(pieceId => {
+            const piece = document.getElementById(pieceId);
+            const centerPiece = document.getElementById(pieceId + '-center');
+
+            piece.addEventListener('click', () => {
+                playClickAndTransition(() => {
+                    piece.classList.add('collected');
+                    piece.style.opacity = '0.3';
+                    centerPiece.classList.add('visible');
+                    collectedPieces++;
+
+                    if (collectedPieces === 4) {
+                        document.getElementById('assemble-btn').style.display = 'block';
+                    }
+                });
+            });
+        });
+
+        // Assemble button
+        document.getElementById('assemble-btn').addEventListener('click', () => {
+            playClickAndTransition(() => {
+                document.getElementById('assemble-btn').style.display = 'none';
+                
+                // Show assembling message and play sound
+                const overlay = document.getElementById('transition-overlay');
+                overlay.style.display = 'block';
+                overlay.innerHTML = '<div class="assembling">Assembling...</div>';
+                
+                clickSound.currentTime = 0;
+                clickSound.play();
+
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    overlay.innerHTML = '';
+
+                    // Hide all pieces
+                    pieces.forEach(pieceId => {
+                        document.getElementById(pieceId).style.display = 'none';
+                        document.getElementById(pieceId + '-center').style.display = 'none';
+                    });
+
+                    // Show assembled watch image
+                    const watchImg = document.createElement('img');
+                    watchImg.src = 'watch.png';
+                    watchImg.style.position = 'absolute';
+                    watchImg.style.top = '50%';
+                    watchImg.style.left = '50%';
+                    watchImg.style.transform = 'translate(-50%, -50%)';
+                    watchImg.style.width = '300px';
+                    watchImg.style.zIndex = '100';
+                    watchImg.id = 'assembled-watch';
+                    document.getElementById('game-container').appendChild(watchImg);
+
+                    // Show completion message
+                    const messageBox = document.getElementById('message-box');
+                    messageBox.innerHTML = 'The Cartier Santos was assembled, present it to SDM (Santos Doro Makayla/Maelli/Martin) Shartos Boutay to approve';
+                    messageBox.style.display = 'block';
+                    messageBox.style.top = '20%';
+                    document.getElementById('present-btn').style.display = 'block';
+                }, 4130);
+            });
+        });
+
+        // Present button
+        document.getElementById('present-btn').addEventListener('click', () => {
+            playClickAndTransition(() => {
+                document.getElementById('message-box').style.display = 'none';
+                document.getElementById('present-btn').style.display = 'none';
+                document.getElementById('background').style.display = 'none';
+                
+                // Hide assembled watch from previous screen
+                const assembledWatch = document.getElementById('assembled-watch');
+                if (assembledWatch) {
+                    assembledWatch.style.display = 'none';
+                }
+
+                // Show white background and SDM
+                document.getElementById('white-background').style.display = 'block';
+                document.getElementById('sdm-image').style.display = 'block';
+                document.getElementById('inspector-text').style.display = 'block';
+                document.getElementById('inspector-text').textContent = 'Let me see your creation';
+                document.getElementById('watch-image').style.display = 'block';
+                document.getElementById('show-btn').style.display = 'block';
+            });
+        });
+
+        // Show button
+        document.getElementById('show-btn').addEventListener('click', () => {
+            playClickAndTransition(() => {
+                document.getElementById('watch-image').style.display = 'none';
+                document.getElementById('show-btn').style.display = 'none';
+                document.getElementById('inspector-text').textContent = 'Hmmm';
+
+                // Show fart animation
+                const fartImage = document.getElementById('fart-image');
+                fartImage.style.display = 'block';
+                fartImage.classList.add('fart-animation');
+
+                fartSound.play();
+
+                // Stop fart animation when sound ends
+                fartSound.onended = () => {
+                    fartImage.classList.remove('fart-animation');
+                    fartImage.style.display = 'none';
+                };
+
+                setTimeout(() => {
+                    document.getElementById('inspector-text').textContent = 'I love your creation, here is a Cartier Santos Coin';
+                    document.getElementById('coin-image').style.display = 'block';
+
+                    setTimeout(() => {
+                        document.getElementById('coin-image').style.display = 'none';
+                        coins++;
+                        document.getElementById('coin-count').textContent = coins;
+                        document.getElementById('coin-counter').style.display = 'block';
+
+                        // Reset game
+                        setTimeout(() => {
+                            resetGame();
+                        }, 2000);
+                    }, 1000);
+                }, 7000);
+            });
+        });
+
+        function resetGame() {
+            // Reset all variables
+            collectedPieces = 0;
+
+            // Hide inspector scene
+            document.getElementById('white-background').style.display = 'none';
+            document.getElementById('sdm-image').style.display = 'none';
+            document.getElementById('inspector-text').style.display = 'none';
+
+            // Show background again
+            document.getElementById('background').style.display = 'block';
+
+            // Reset pieces
+            pieces.forEach(pieceId => {
+                const piece = document.getElementById(pieceId);
+                const centerPiece = document.getElementById(pieceId + '-center');
+                
+                piece.style.display = 'block';
+                piece.style.opacity = '1';
+                piece.classList.remove('collected');
+                centerPiece.classList.remove('visible');
+            });
+            
+            // Remove assembled watch if it exists
+            const assembledWatch = document.getElementById('assembled-watch');
+            if (assembledWatch) {
+                assembledWatch.remove();
+            }
+        }
+    </script>
+</body>
+</html>
