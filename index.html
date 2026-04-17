@@ -50,6 +50,7 @@
         #band { top: 10%; left: 10%; width: 280px; }
         #mechanism { top: 15%; right: 10%; width: 100px; }
         #dial { bottom: 15%; left: 12%; width: 290px; }
+        #arrows { top: 50%; left: 5%; width: 150px; }
         #casing { bottom: 10%; right: 15%; width: 295px; }
 
         .center-piece {
@@ -169,6 +170,131 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
+        #shop-icon {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 215, 0, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+            z-index: 400;
+        }
+
+        #shop-icon:hover {
+            transform: scale(1.1);
+        }
+
+        #shop-menu {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.98);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 500;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        #shop-menu h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            color: #333;
+        }
+
+        .shop-item {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(240, 240, 240, 0.8);
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .shop-item-info {
+            flex: 1;
+        }
+
+        .shop-item-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .shop-item-price {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .shop-buy-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .shop-buy-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .shop-buy-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .shop-buy-btn.owned {
+            background: #4CAF50;
+            cursor: default;
+        }
+
+        #shop-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #666;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        #shop-close:hover {
+            background: rgba(0,0,0,0.1);
+        }
+
+        #magnet-image {
+            position: absolute;
+            top: 50%;
+            left: 52%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            display: none;
+            z-index: 250;
+        }
+
         #fart-image {
             position: absolute;
             bottom: 15%;
@@ -236,12 +362,14 @@
         <img id="band" class="piece" src="band.png" alt="Band">
         <img id="mechanism" class="piece" src="mechanism.png" alt="Mechanism">
         <img id="dial" class="piece" src="dial.png" alt="Dial">
+        <img id="arrows" class="piece" src="arrows.png" alt="Arrows">
         <img id="casing" class="piece" src="casing.png" alt="Casing">
 
         <!-- Center pieces (invisible until clicked) -->
         <img id="band-center" class="center-piece" src="band.png" alt="Band Center">
         <img id="mechanism-center" class="center-piece" src="mechanism.png" alt="Mechanism Center">
         <img id="dial-center" class="center-piece" src="dial.png" alt="Dial Center">
+        <img id="arrows-center" class="center-piece" src="arrows.png" alt="Arrows Center">
         <img id="casing-center" class="center-piece" src="casing.png" alt="Casing Center">
 
         <!-- Assemble button -->
@@ -259,6 +387,7 @@
         <!-- White background for inspector scene -->
         <div id="white-background"></div>
         <img id="sdm-image" src="sdm.png" alt="SDM Inspector">
+        <img id="magnet-image" src="magnet.png" alt="Tuff Pierrefond Magnet">
         <div id="inspector-text"></div>
         <img id="watch-image" src="watch.png" alt="Assembled Watch">
         <button id="show-btn">Show</button>
@@ -266,6 +395,43 @@
         <!-- Coin display -->
         <img id="coin-image" src="coin.png" alt="Cartier Santos Coin">
         <div id="coin-counter">C.S. Coins: <span id="coin-count">0</span></div>
+
+        <!-- Shop icon -->
+        <div id="shop-icon">🛒</div>
+
+        <!-- Shop menu -->
+        <div id="shop-menu">
+            <div id="shop-close">×</div>
+            <h2>SDM Customization Shop</h2>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">SDM Soccer Ball</div>
+                    <div class="shop-item-price">3 C.S. Coins</div>
+                </div>
+                <button class="shop-buy-btn" data-item="ball" data-price="3">Buy</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">SDM Fart</div>
+                    <div class="shop-item-price">3 C.S. Coins</div>
+                </div>
+                <button class="shop-buy-btn" data-item="fart" data-price="3">Buy</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">SDM Dildo</div>
+                    <div class="shop-item-price">4 C.S. Coins</div>
+                </div>
+                <button class="shop-buy-btn" data-item="dildo" data-price="4">Buy</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-item-info">
+                    <div class="shop-item-name">Tuff Pierrefond Magnet</div>
+                    <div class="shop-item-price">2 C.S. Coins</div>
+                </div>
+                <button class="shop-buy-btn" data-item="magnet" data-price="2">Buy</button>
+            </div>
+        </div>
 
         <!-- Fart effect -->
         <img id="fart-image" src="fart.png" alt="Fart Effect">
@@ -287,14 +453,97 @@
         let coins = 0;
         let isTransitioning = false;
         let assemblyOrder = []; // Track the order pieces were clicked
+        let ownedItems = {
+            ball: false,
+            fart: false,
+            dildo: false,
+            magnet: false
+        };
 
-        const pieces = ['band', 'mechanism', 'dial', 'casing'];
-        const correctOrder = ['mechanism', 'dial', 'casing', 'band'];
+        const pieces = ['band', 'mechanism', 'dial', 'arrows', 'casing'];
+        const correctOrder = ['mechanism', 'dial', 'arrows', 'casing', 'band'];
         const clickSound = document.getElementById('click-sound');
         const fartSound = document.getElementById('fart-sound');
         const fart2Sound = document.getElementById('fart2-sound');
         const explosionSound = document.getElementById('explosion-sound');
         const transitionOverlay = document.getElementById('transition-overlay');
+
+        // Shop functionality
+        const shopIcon = document.getElementById('shop-icon');
+        const shopMenu = document.getElementById('shop-menu');
+        const shopClose = document.getElementById('shop-close');
+        const buyButtons = document.querySelectorAll('.shop-buy-btn');
+
+        shopIcon.addEventListener('click', () => {
+            shopMenu.style.display = 'block';
+            updateShopButtons();
+        });
+
+        shopClose.addEventListener('click', () => {
+            shopMenu.style.display = 'none';
+        });
+
+        buyButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.getAttribute('data-item');
+                const price = parseInt(btn.getAttribute('data-price'));
+
+                if (coins >= price && !ownedItems[item]) {
+                    coins -= price;
+                    ownedItems[item] = true;
+                    document.getElementById('coin-count').textContent = coins;
+                    updateShopButtons();
+                    updateSDMImage();
+                }
+            });
+        });
+
+        function updateShopButtons() {
+            buyButtons.forEach(btn => {
+                const item = btn.getAttribute('data-item');
+                const price = parseInt(btn.getAttribute('data-price'));
+
+                if (ownedItems[item]) {
+                    btn.textContent = 'Owned';
+                    btn.classList.add('owned');
+                    btn.disabled = true;
+                } else if (coins < price) {
+                    btn.disabled = true;
+                } else {
+                    btn.disabled = false;
+                }
+            });
+        }
+
+        function getSDMImagePath() {
+            const hasBall = ownedItems.ball;
+            const hasFart = ownedItems.fart;
+            const hasDildo = ownedItems.dildo;
+
+            // Check for combinations
+            if (hasBall && hasFart && hasDildo) {
+                return 'sdmfartballdildo.png'; // All three (if you want to add this)
+            } else if (hasBall && hasFart) {
+                return 'sdmfartball.png';
+            } else if (hasFart && hasDildo) {
+                return 'sdmdildofart.png';
+            } else if (hasBall && hasDildo) {
+                return 'sdmballdildo.png';
+            } else if (hasBall) {
+                return 'sdmball.png';
+            } else if (hasFart) {
+                return 'sdmfart.png';
+            } else if (hasDildo) {
+                return 'sdmdildo.png';
+            }
+
+            return 'sdm.png'; // Default
+        }
+
+        function updateSDMImage() {
+            const sdmImage = document.getElementById('sdm-image');
+            sdmImage.src = getSDMImagePath();
+        }
 
         // Play sound and show transition
         function playClickAndTransition(callback) {
@@ -326,7 +575,7 @@
                     collectedPieces++;
                     assemblyOrder.push(pieceId); // Track order
 
-                    if (collectedPieces === 4) {
+                    if (collectedPieces === 5) {
                         document.getElementById('assemble-btn').style.display = 'block';
                     }
                 });
@@ -423,6 +672,13 @@
                 // Show white background and SDM
                 document.getElementById('white-background').style.display = 'block';
                 document.getElementById('sdm-image').style.display = 'block';
+                updateSDMImage(); // Update SDM image based on owned items
+                
+                // Show magnet if owned
+                if (ownedItems.magnet) {
+                    document.getElementById('magnet-image').style.display = 'block';
+                }
+                
                 document.getElementById('inspector-text').style.display = 'block';
                 document.getElementById('inspector-text').textContent = 'Let me see your creation';
                 
@@ -475,14 +731,13 @@
                             document.getElementById('coin-counter').style.display = 'block';
 
                             // Show proceed button to continue playing
-                            document.getElementById('inspector-text').textContent = 'Great job! Ready for another assembly?';
                             document.getElementById('proceed-btn').style.display = 'block';
                         }, 1000);
                     } else {
                         // Wrong assembly - reject
-                        document.getElementById('inspector-text').textContent = 'What is this shit, SDM Cartier Santos is mad and is gonna doro and shart all over maelli';
+                        document.getElementById('inspector-text').textContent = 'What is this shit, take that back, SDM Cartier Santos is mad and is gonna doro and shart all over maelli';
                         
-                        // After 3 seconds, trigger explosion
+                        // After 1 second, trigger explosion
                         setTimeout(() => {
                             const explosionImg = document.getElementById('explosion-image');
                             explosionImg.style.display = 'block';
@@ -502,7 +757,7 @@
                                 explosionImg.style.display = 'none';
                                 document.getElementById('proceed-btn').style.display = 'block';
                             }, 2000);
-                        }, 3000);
+                        }, 1000);
                     }
                 }, 7000);
             });
@@ -523,6 +778,7 @@
             // Hide inspector scene
             document.getElementById('white-background').style.display = 'none';
             document.getElementById('sdm-image').style.display = 'none';
+            document.getElementById('magnet-image').style.display = 'none';
             document.getElementById('inspector-text').style.display = 'none';
             document.getElementById('proceed-btn').style.display = 'none';
             document.getElementById('coin-image').style.display = 'none';
@@ -539,9 +795,7 @@
                 piece.style.opacity = '1';
                 piece.classList.remove('collected');
                 
-                centerPiece.style.display = 'block';
                 centerPiece.classList.remove('visible');
-                centerPiece.style.opacity = '0';
             });
             
             // Remove assembled watch if it exists
