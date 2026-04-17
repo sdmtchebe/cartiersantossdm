@@ -180,6 +180,23 @@
             z-index: 500;
         }
 
+        #explosion-image {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            display: none;
+            z-index: 10000;
+            transition: transform 0.001s ease-out;
+        }
+
+        #explosion-image.explode {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
         @keyframes fartPulse {
             0%, 100% { opacity: 0; }
             50% { opacity: 1; }
@@ -253,12 +270,17 @@
         <!-- Fart effect -->
         <img id="fart-image" src="fart.png" alt="Fart Effect">
 
+        <!-- Explosion effect -->
+        <img id="explosion-image" src="explosion.png" alt="Explosion">
+
         <!-- Transition overlay -->
         <div id="transition-overlay"></div>
     </div>
 
     <audio id="click-sound" src="cartiersantos.mp3"></audio>
     <audio id="fart-sound" src="fart.mp3"></audio>
+    <audio id="fart2-sound" src="fart2.mp3"></audio>
+    <audio id="explosion-sound" src="explosion.mp3"></audio>
 
     <script>
         let collectedPieces = 0;
@@ -270,6 +292,8 @@
         const correctOrder = ['mechanism', 'dial', 'casing', 'band'];
         const clickSound = document.getElementById('click-sound');
         const fartSound = document.getElementById('fart-sound');
+        const fart2Sound = document.getElementById('fart2-sound');
+        const explosionSound = document.getElementById('explosion-sound');
         const transitionOverlay = document.getElementById('transition-overlay');
 
         // Play sound and show transition
@@ -457,7 +481,28 @@
                     } else {
                         // Wrong assembly - reject
                         document.getElementById('inspector-text').textContent = 'What is this nigger asshole, take that back, SDM Cartier Santos is mad and is gonna doro maelli';
-                        document.getElementById('proceed-btn').style.display = 'block';
+                        
+                        // After 3 seconds, trigger explosion
+                        setTimeout(() => {
+                            const explosionImg = document.getElementById('explosion-image');
+                            explosionImg.style.display = 'block';
+                            
+                            // Play both sounds simultaneously
+                            fart2Sound.play();
+                            explosionSound.play();
+                            
+                            // Trigger explosion animation
+                            setTimeout(() => {
+                                explosionImg.classList.add('explode');
+                            }, 10);
+                            
+                            // Show proceed button after explosion
+                            setTimeout(() => {
+                                explosionImg.classList.remove('explode');
+                                explosionImg.style.display = 'none';
+                                document.getElementById('proceed-btn').style.display = 'block';
+                            }, 2000);
+                        }, 3000);
                     }
                 }, 7000);
             });
