@@ -480,6 +480,7 @@
             document.getElementById('sdm-image').style.display = 'none';
             document.getElementById('inspector-text').style.display = 'none';
             document.getElementById('proceed-btn').style.display = 'none';
+            document.getElementById('coin-image').style.display = 'none';
 
             // Show background again
             document.getElementById('background').style.display = 'block';
@@ -492,7 +493,10 @@
                 piece.style.display = 'block';
                 piece.style.opacity = '1';
                 piece.classList.remove('collected');
+                
+                centerPiece.style.display = 'block';
                 centerPiece.classList.remove('visible');
+                centerPiece.style.opacity = '0';
             });
             
             // Remove assembled watch if it exists
