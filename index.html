@@ -351,37 +351,27 @@
                         watchImg.id = 'assembled-watch';
                         document.getElementById('game-container').appendChild(watchImg);
                     } else {
-                        // Wrong order - show disorganized pieces
+                        // Wrong order - show disorganized pieces stacked together
                         const container = document.createElement('div');
                         container.id = 'assembled-watch';
                         container.style.position = 'absolute';
                         container.style.top = '50%';
                         container.style.left = '50%';
                         container.style.transform = 'translate(-50%, -50%)';
-                        container.style.width = '400px';
-                        container.style.height = '400px';
+                        container.style.width = '300px';
+                        container.style.height = '300px';
                         container.style.zIndex = '100';
 
-                        // Show pieces in messy arrangement
+                        // Show pieces stacked in the order they were assembled
                         assemblyOrder.forEach((pieceId, index) => {
                             const img = document.createElement('img');
                             img.src = pieceId + '.png';
                             img.style.position = 'absolute';
-                            img.style.width = '120px';
-                            
-                            // Random messy positions
-                            const positions = [
-                                { top: '10%', left: '5%', rotate: '15deg' },
-                                { top: '20%', right: '10%', rotate: '-20deg' },
-                                { bottom: '15%', left: '15%', rotate: '25deg' },
-                                { bottom: '10%', right: '5%', rotate: '-15deg' }
-                            ];
-                            
-                            img.style.top = positions[index].top || 'auto';
-                            img.style.bottom = positions[index].bottom || 'auto';
-                            img.style.left = positions[index].left || 'auto';
-                            img.style.right = positions[index].right || 'auto';
-                            img.style.transform = `rotate(${positions[index].rotate})`;
+                            img.style.width = '200px';
+                            img.style.top = '50%';
+                            img.style.left = '50%';
+                            img.style.transform = `translate(-50%, -50%) rotate(${index * 15 - 22}deg)`;
+                            img.style.zIndex = index;
                             
                             container.appendChild(img);
                         });
@@ -467,7 +457,7 @@
                         }, 1000);
                     } else {
                         // Wrong assembly - reject
-                        document.getElementById('inspector-text').textContent = 'What is this shit, take that back, SDM Cartier Santos is mad';
+                        document.getElementById('inspector-text').textContent = 'What is this nigger asshole, take that back, SDM Cartier Santos is mad and is gonna doro maelli';
                         document.getElementById('proceed-btn').style.display = 'block';
                     }
                 }, 7000);
