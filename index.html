@@ -172,7 +172,7 @@
         #fart-image {
             position: absolute;
             bottom: 15%;
-            left: 51%;
+            left: 55%;
             transform: translateX(-50%);
             width: 150px;
             display: none;
@@ -441,7 +441,7 @@
                 setTimeout(() => {
                     if (isCorrectOrder()) {
                         // Correct assembly - give coin
-                        document.getElementById('inspector-text').textContent = 'I love your creation, here is a Cartier Santos Coin';
+                        document.getElementById('inspector-text').textContent = 'I love your creation, here is a Cartier Santos Coin, I wont doro Maelli this time';
                         document.getElementById('coin-image').style.display = 'block';
 
                         setTimeout(() => {
@@ -450,10 +450,9 @@
                             document.getElementById('coin-count').textContent = coins;
                             document.getElementById('coin-counter').style.display = 'block';
 
-                            // Reset game
-                            setTimeout(() => {
-                                resetGame();
-                            }, 2000);
+                            // Show proceed button to continue playing
+                            document.getElementById('inspector-text').textContent = 'Great job! Ready for another assembly?';
+                            document.getElementById('proceed-btn').style.display = 'block';
                         }, 1000);
                     } else {
                         // Wrong assembly - reject
